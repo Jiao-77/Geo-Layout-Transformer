@@ -1,0 +1,7 @@
+torch
+torch-geometric
+gdstk
+numpy
+pyyaml
+pandas
+scikit-learn

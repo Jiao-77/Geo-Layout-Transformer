@@ -1,0 +1,26 @@
+# Hotspot Detection Task Configuration
+
+# Inherits from default.yaml
+
+# 1. Data Preprocessing
+data:
+  # For hotspot detection, we might need smaller, more focused patches
+  patch_size: 2.0
+  patch_stride: 1.0
+
+# 2. Model Architecture
+model:
+  # Add a task-specific head for classification
+  task_head:
+    type: "classification"
+    input_dim: 256 # Must match transformer.hidden_dim
+    hidden_dim: 64
+    output_dim: 1    # Binary classification (Hotspot / Not Hotspot)
+
+# 3. Training
+training:
+  # Use a loss function suitable for imbalanced datasets
+  loss_function: "focal_loss"
+  # Task-specific learning rate might be different
+  learning_rate: 0.00005
+  epochs: 50

@@ -1,0 +1,49 @@
+# Default Configuration for Geo-Layout Transformer
+
+# 1. Data Preprocessing
+data:
+  patch_size: 10.0  # in microns
+  patch_stride: 5.0   # in microns
+  layer_mapping:
+    "1/0": 0   # Example: GDS Layer 1, Datatype 0 -> Index 0 (e.g., M1)
+    "2/0": 1   # Example: GDS Layer 2, Datatype 0 -> Index 1 (e.g., VIA1)
+    "3/0": 2   # Example: GDS Layer 3, Datatype 0 -> Index 2 (e.g., M2)
+  graph_construction:
+    edge_strategy: "knn" # 'knn' or 'radius'
+    knn_k: 8             # K for KNN graph construction
+    radius_d: 1.0        # Radius for radius graph construction (in microns)
+
+# 2. Model Architecture
+model:
+  # GNN Encoder
+  gnn:
+    node_input_dim: 5    # Initial node feature dim (e.g., x, y, w, h, area)
+    hidden_dim: 128
+    output_dim: 256      # Dimension of the patch embedding
+    num_layers: 4
+    gnn_type: "rgat"     # 'rgat', 'gcn', 'graphsage'
+
+  # Transformer Backbone
+  transformer:
+    num_layers: 6
+    num_heads: 8
+    hidden_dim: 256      # Must match gnn.output_dim
+    dropout: 0.1
+    positional_encoding:
+      type: "hybrid"   # 'hybrid', 'absolute', 'relative'
+
+# 3. Training
+training:
+  mode: "train" # 'train', 'eval', 'pretrain'
+  batch_size: 32
+  learning_rate: 0.0001
+  epochs: 100
+  optimizer: "adamw"
+  loss_function: "bce" # 'bce', 'focal_loss'
+  weight_decay: 0.01
+
+# 4. Self-Supervised Pre-training
+pretraining:
+  mask_ratio: 0.15
+  epochs: 200
+  learning_rate: 0.0005

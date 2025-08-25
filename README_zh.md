@@ -1,0 +1,116 @@
+# Geo-Layout Transformer
+
+**一个用于物理设计分析的统一、自监督基础模型**
+
+---
+
+## 1. 项目愿景
+
+**Geo-Layout Transformer** 是一个旨在推动电子设计自动化（EDA）物理设计领域范式转变的研究项目。我们不再依赖于一套零散的、基于启发式规则的工具，而是致力于构建一个统一的基础模型，使其能够理解半导体版图深层次的、上下文相关的“设计语言”。
+
+通过利用新颖的 **图神经网络（GNN）+ Transformer** 混合架构，并在海量未标记的 GDSII 数据上进行预训练，该模型经过微调后，能够出色地完成各种关键的后端分析任务，包括：
+
+*   **高精度连通性验证**：通过理解版图拓扑结构来检测开路和短路。
+*   **结构化版图匹配**：实现 IP 复用和设计相似性搜索。
+*   **预测性热点检测**：以高准确率和低误报率识别可制造性问题。
+
+我们的愿景是，从目前分散的、任务特定的工具，演进为一个集中的、可复用的“版图理解引擎”，从而加速设计周期，并突破 PPA（功耗、性能、面积）的极限。
+
+## 2. 核心架构
+
+该模型的架构设计旨在分层处理版图信息，模仿人类专家从局部细节到全局上下文分析设计的过程。
+
+![架构图](https://i.imgur.com/example.png) <!-- 未来架构图的占位符 -->
+
+1.  **GDSII 到图的处理流水线**：我们将原始的 GDSII/OASIS 文件解析成丰富的异构图表示。每个版图“区块”（Patch）被转换成一个图，其中多边形和通孔是**节点**，它们之间的物理邻接和连通关系是**边**。
+
+2.  **GNN 区块编码器**：一个强大的图神经网络（特指关系图注意力网络 - RGAT）作为“局部规则学习器”。它处理每个区块的图，将复杂的局部几何形状和层间关系编码成一个单一的、丰富的特征向量（嵌入）。这个嵌入向量代表了对该区块的高度语义化总结。
+
+3.  **全局 Transformer 骨干网络**：区块嵌入序列被送入一个 Transformer 模型。至关重要的是，我们注入了**混合二维位置编码**（包括绝对和相对位置），以告知模型每个区块的空间位置。Transformer 的自注意力机制使其能够检测长程依赖关系、重复结构（如标准单元阵列）以及整个芯片的全局上下文模式。
+
+4.  **特定任务头**：从 Transformer 输出的、具有全局上下文感知能力的最终嵌入，被送入简单、轻量级的神经网络“头”（Head）中，以执行特定的下游任务。这种模块化设计使得核心模型能够以最小的代价适应新的应用。
+
+## 3. 快速上手
+
+### 3.1. 环境要求
+
+*   Python 3.9+
+*   强烈建议使用 Conda 进行环境管理。
+*   能够访问 EDA 工具以生成带标签的数据（例如，使用 DRC 工具生成热点标签）。
+
+### 3.2. 安装步骤
+
+1.  **克隆代码仓库：**
+    ```bash
+    git clone https://github.com/your-username/Geo-Layout-Transformer.git
+    cd Geo-Layout-Transformer
+    ```
+
+2.  **创建并激活 Conda 环境：**
+    ```bash
+    conda create -n geo_trans python=3.9
+    conda activate geo_trans
+    ```
+
+3.  **安装依赖：**
+    本项目需要 PyTorch 和 PyTorch Geometric (PyG)。请根据您的 CUDA 版本遵循官方指南进行安装。
+
+    *   **PyTorch:** [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
+    *   **PyG:** [https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)
+
+    安装完 PyTorch 和 PyG 后，安装其余的依赖项：
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *（注意：您可能需要通过 `klayout` 自身的包管理器或从源码编译来单独安装它，以启用其 Python API）。*
+
+## 4. 项目使用
+
+项目的工作流程分为两个主要阶段：数据预处理和模型训练。
+
+### 4.1. 阶段一：数据预处理
+
+第一步是将您的 GDSII/OASIS 文件转换为模型可以使用的图数据集。
+
+1.  将您的版图文件放入 `data/gds/` 目录。
+2.  在 `configs/default.yaml` 中配置预处理参数。您需要定义区块大小、步长、层映射以及图边的构建方式。
+3.  运行预处理脚本：
+    ```bash
+    python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
+    ```
+    该脚本将解析 GDS 文件，将其划分为多个区块，为每个区块构建一个图，并将处理后的数据保存为 `.pt` 文件以便高效加载。
+
+### 4.2. 阶段二：模型训练
+
+数据集准备就绪后，您就可以开始训练 Geo-Layout Transformer。
+
+#### 自监督预训练（推荐）
+
+为了构建一个强大的基础模型，我们首先在无标签数据上使用“掩码版图建模”任务对其进行预训练。
+
+```bash
+python main.py --config-file configs/default.yaml --mode pretrain --data-dir data/processed/my_design/
+```
+这将训练模型理解物理版图的基本“语法”，而无需任何昂贵的标签。
+
+#### 监督微调
+
+预训练之后，您可以在一个较小的、有标签的数据集上对模型进行微调，以适应像热点检测这样的特定任务。
+
+1.  确保您处理好的数据包含标签。
+2.  使用一个特定于任务的配置文件（例如 `hotspot_detection.yaml`），其中定义了模型的任务头和损失函数。
+3.  在 `train` 模式下运行主脚本：
+    ```bash
+    python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
+    ```
+
+## 5. 发展路线与贡献
+
+这是一个宏伟的项目，我们欢迎任何形式的贡献。我们未来的发展路线图包括：
+
+-   [ ] **更先进的自监督任务**：探索对比学习和其他 SSL 方法。
+-   [ ] **模型可解释性**：实现可视化注意力图的工具，以理解模型的决策过程。
+-   [ ] **全芯片可扩展性**：集成图分割技术（如 Cluster-GCN）来处理芯片规模的设计。
+-   [ ] **生成式设计**：在生成式框架中使用学习到的表示来合成“构建即正确”的版图。
+
+欢迎随时提出 Issue 或提交 Pull Request。
