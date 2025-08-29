@@ -1,8 +1,22 @@
-# Geo-Layout Transformer
+# Geo-Layout Transformer 🚀
 
 **一个用于物理设计分析的统一、自监督基础模型**
 
 ---
+
+## ✨ 亮点
+
+- **统一基础模型**：覆盖多种物理设计分析任务
+- **混合 GNN + Transformer**：从局部到全局建模版图语义
+- **自监督预训练**：在无标签 GDSII/OASIS 上学习强泛化表示
+- **模块化任务头**：轻松适配（如热点检测、连通性验证）
+
+## 🖥️ 支持系统
+
+- **Python**：3.9+
+- **操作系统**：macOS 13+/Apple Silicon、Linux（Ubuntu 20.04/22.04）。Windows 建议使用 **WSL2**
+- **深度学习框架**：PyTorch、PyTorch Geometric（CUDA 可选）
+- **EDA I/O**：GDSII/OASIS（通过 `klayout` Python API）
 
 ## 1. 项目愿景
 
@@ -29,6 +43,34 @@
 3.  **全局 Transformer 骨干网络**：区块嵌入序列被送入一个 Transformer 模型。至关重要的是，我们注入了**混合二维位置编码**（包括绝对和相对位置），以告知模型每个区块的空间位置。Transformer 的自注意力机制使其能够检测长程依赖关系、重复结构（如标准单元阵列）以及整个芯片的全局上下文模式。
 
 4.  **特定任务头**：从 Transformer 输出的、具有全局上下文感知能力的最终嵌入，被送入简单、轻量级的神经网络“头”（Head）中，以执行特定的下游任务。这种模块化设计使得核心模型能够以最小的代价适应新的应用。
+
+## 🧭 项目结构
+
+```text
+Geo-Layout-Transformer/
+├─ configs/                  # 训练与任务配置（如 default、hotspot）
+├─ scripts/
+│  ├─ preprocess_gds.py      # GDSII → 图数据集流水线
+│  └─ visualize_attention.py # 注意力与可解释性工具
+├─ src/
+│  ├─ data/
+│  │  ├─ dataset.py          # PyG 数据集/加载器
+│  │  ├─ gds_parser.py       # GDS/OASIS 解析
+│  │  └─ graph_constructor.py# 异构图构建逻辑
+│  ├─ engine/
+│  │  ├─ trainer.py          # 训练循环（预训练/微调）
+│  │  ├─ evaluator.py        # 评估与指标
+│  │  └─ self_supervised.py  # 自监督任务（如掩码版图建模）
+│  ├─ models/
+│  │  ├─ gnn_encoder.py      # 区块级 GNN 编码器（如 RGAT）
+│  │  ├─ transformer_core.py # 全局 Transformer 骨干
+│  │  ├─ task_heads.py       # 下游任务头
+│  │  └─ geo_layout_transformer.py # 端到端模型组装
+│  └─ utils/                 # 配置、日志与通用工具
+├─ main.py                   # 入口（预训练/训练/推理）
+├─ requirements.txt          # Python 依赖（在 PyTorch/PyG 之后安装）
+└─ README*.md                # 中英文文档
+```
 
 ## 3. 快速上手
 
@@ -63,6 +105,8 @@
     pip install -r requirements.txt
     ```
     *（注意：您可能需要通过 `klayout` 自身的包管理器或从源码编译来单独安装它，以启用其 Python API）。*
+
+> 提示：GPU 不是必须的。仅 CPU 环境可安装 PyTorch/PyG 的 CPU 版本。
 
 ## 4. 项目使用
 
@@ -114,3 +158,7 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
 -   [ ] **生成式设计**：在生成式框架中使用学习到的表示来合成“构建即正确”的版图。
 
 欢迎随时提出 Issue 或提交 Pull Request。
+
+---
+
+Made with ❤️ 面向 EDA 研究与开源协作。

@@ -1,8 +1,22 @@
-# Geo-Layout Transformer
+# Geo-Layout Transformer 🚀
 
 **A Unified, Self-Supervised Foundation Model for Physical Design Analysis**
 
 ---
+
+## ✨ Highlights
+
+- **Unified foundation model** for diverse physical design analysis tasks
+- **Hybrid GNN + Transformer** architecture capturing local-to-global layout semantics
+- **Self-supervised pretraining** on unlabeled GDSII/OASIS for strong transferability
+- **Modular task heads** for easy adaptation (e.g., hotspot detection, connectivity)
+
+## 🖥️ Supported Systems
+
+- **Python**: 3.9+
+- **OS**: macOS 13+/Apple Silicon, Linux (Ubuntu 20.04/22.04). Windows via **WSL2** recommended
+- **Frameworks**: PyTorch, PyTorch Geometric (with CUDA optional)
+- **EDA I/O**: GDSII/OASIS (via `klayout` Python API)
 
 ## 1. Vision
 
@@ -29,6 +43,34 @@ The model's architecture is designed to hierarchically process layout informatio
 3.  **Global Transformer Backbone**: The sequence of patch embeddings is fed into a Transformer model. Crucially, we inject **hybrid 2D positional encodings** (both absolute and relative) to inform the model of each patch's spatial location. The Transformer's self-attention mechanism allows it to detect long-range dependencies, repetitive structures (like standard cell arrays), and global contextual patterns across the entire chip.
 
 4.  **Task-Specific Heads**: The final, context-aware embeddings from the Transformer are fed into simple, lightweight neural network "heads" for specific downstream tasks. This modular design allows the core model to be adapted to new applications with minimal effort.
+
+## 🧭 Project Structure
+
+```text
+Geo-Layout-Transformer/
+├─ configs/                  # Training & task configs (e.g., default, hotspot)
+├─ scripts/
+│  ├─ preprocess_gds.py      # GDSII → graph dataset pipeline
+│  └─ visualize_attention.py # Attention/interpretability utilities
+├─ src/
+│  ├─ data/
+│  │  ├─ dataset.py          # PyTorch Geometric dataset/dataloader
+│  │  ├─ gds_parser.py       # GDS/OASIS parsing helpers
+│  │  └─ graph_constructor.py# Hetero-graph construction logic
+│  ├─ engine/
+│  │  ├─ trainer.py          # Train loop (pretrain/fine-tune)
+│  │  ├─ evaluator.py        # Evaluation & metrics
+│  │  └─ self_supervised.py  # SSL tasks (e.g., masked layout modeling)
+│  ├─ models/
+│  │  ├─ gnn_encoder.py      # Patch-level GNN encoder (e.g., RGAT)
+│  │  ├─ transformer_core.py # Global Transformer backbone
+│  │  ├─ task_heads.py       # Downstream task heads
+│  │  └─ geo_layout_transformer.py # End-to-end model composition
+│  └─ utils/                 # Config, logging, misc utilities
+├─ main.py                   # Entry point (pretrain/train/infer)
+├─ requirements.txt          # Python deps (install after PyTorch/PyG)
+└─ README*.md                # English/Chinese documentation
+```
 
 ## 3. Getting Started
 
@@ -63,6 +105,8 @@ The model's architecture is designed to hierarchically process layout informatio
     pip install -r requirements.txt
     ```
     *(Note: You may need to install `klayout` separately via its own package manager or build from source to enable its Python API).*
+
+> Tip: GPU is optional. For CPU-only environments, install the CPU variants of PyTorch/PyG.
 
 ## 4. Project Usage
 
@@ -114,3 +158,7 @@ This project is ambitious and we welcome contributions. Our future roadmap inclu
 -   [ ] **Generative Design**: Using the learned representations in a generative framework to synthesize "correct-by-construction" layouts.
 
 Please feel free to open an issue or submit a pull request.
+
+---
+
+Made with ❤️ for EDA research and open-source collaboration.
