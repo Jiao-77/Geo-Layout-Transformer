@@ -1,3 +1,24 @@
+<div align="center">
+
+<p align="center">
+  <img src="docs/images/logo.png" width="240px" alt="Geo-Layout Transformer"/>
+</p>
+
+<p>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/stargazers"><img src="https://img.shields.io/github/stars/your-username/Geo-Layout-Transformer.svg" /></a>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/network/members"><img src="https://img.shields.io/github/forks/your-username/Geo-Layout-Transformer.svg" /></a>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/issues"><img src="https://img.shields.io/github/issues-raw/your-username/Geo-Layout-Transformer" /></a>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/your-username/Geo-Layout-Transformer" /></a>
+  <a><img src="https://img.shields.io/badge/python-3.9%2B-blue" /></a>
+  <a><img src="https://img.shields.io/badge/PyTorch-2.x-orange" /></a>
+</p>
+
+<p>
+  <a href="README.md">English</a> | <a href="README_zh.md">简体中文</a>
+</p>
+
+</div>
+
 # Geo-Layout Transformer 🚀
 
 **A Unified, Self-Supervised Foundation Model for Physical Design Analysis**
@@ -124,6 +145,22 @@ The first step is to convert your GDSII/OASIS files into a graph dataset that th
     ```
     This script will parse the GDS file, divide it into patches, construct a graph for each patch, and save the processed data as `.pt` files for efficient loading.
 
+#### Polygon handling and per-patch graphs 🧩
+
+When building a graph for each patch, we now preserve both global and per-patch (clipped) polygon information to robustly handle polygons spanning multiple patches:
+
+- Each geometry retains:
+  - **Global polygon**: vertices, bbox, area.
+  - **Clipped polygon(s)** in the patch: vertices (may be multiple fragments), area, and the **area ratio** (clipped/global).
+  - **is_partial** flag indicating cross-patch polygons.
+  - **Layer index** and the **patch bbox**.
+- Node features include centroid, width/height from clipped shape (or global if no clip), clipped area, area ratio, layer id, and partial flag.
+- Extra metadata is attached on the PyG `Data` object:
+  - `data.layer: LongTensor [num_nodes]`
+  - `data.node_meta: List[Dict]` with per-node global/clipped details (for visualization/debugging)
+
+This follows the spirit of LayoutGMN’s structural encoding while staying compatible with our GNN encoder.
+
 ### 4.2. Stage 2: Model Training
 
 Once the dataset is ready, you can train the Geo-Layout Transformer.
@@ -158,6 +195,17 @@ This project is ambitious and we welcome contributions. Our future roadmap inclu
 -   [ ] **Generative Design**: Using the learned representations in a generative framework to synthesize "correct-by-construction" layouts.
 
 Please feel free to open an issue or submit a pull request.
+
+## Acknowledgments
+
+We stand on the shoulders of open-source communities. This project draws inspiration and/or utilities from:
+
+- PyTorch and PyTorch Geometric for model building and graph learning
+- gdstk/klayout for GDSII/OASIS parsing and geometry operations
+- Scientific Python stack (NumPy, SciPy) for numerical robustness
+- Research works such as LayoutGMN (graph matching for structural similarity) that informed our polygon/graph handling design
+
+If your work is used and not listed here, please open an issue or PR so we can properly credit you.
 
 ---
 
