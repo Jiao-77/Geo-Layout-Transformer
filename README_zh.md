@@ -1,3 +1,24 @@
+<div align="center">
+
+<p align="center">
+  <img src="docs/images/logo.png" width="240px" alt="Geo-Layout Transformer"/>
+</p>
+
+<p>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/stargazers"><img src="https://img.shields.io/github/stars/your-username/Geo-Layout-Transformer.svg" /></a>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/network/members"><img src="https://img.shields.io/github/forks/your-username/Geo-Layout-Transformer.svg" /></a>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/issues"><img src="https://img.shields.io/github/issues-raw/your-username/Geo-Layout-Transformer" /></a>
+  <a href="https://github.com/your-username/Geo-Layout-Transformer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/your-username/Geo-Layout-Transformer" /></a>
+  <a><img src="https://img.shields.io/badge/python-3.9%2B-blue" /></a>
+  <a><img src="https://img.shields.io/badge/PyTorch-2.x-orange" /></a>
+</p>
+
+<p>
+  <a href="README.md">English</a> | <a href="README_zh.md">简体中文</a>
+</p>
+
+</div>
+
 # Geo-Layout Transformer 🚀
 
 **一个用于物理设计分析的统一、自监督基础模型**
@@ -124,6 +145,22 @@ Geo-Layout-Transformer/
     ```
     该脚本将解析 GDS 文件，将其划分为多个区块，为每个区块构建一个图，并将处理后的数据保存为 `.pt` 文件以便高效加载。
 
+#### 多边形处理与按区块建图 🧩
+
+在为每个区块（patch）构建图时，我们同时保留多边形的全局信息和区块内（裁剪后）的信息，以稳健处理跨越多个区块的多边形：
+
+- 每个几何对象包含：
+  - **全局多边形**：顶点、外接框、面积。
+  - **区块内裁剪多边形（可能多个片段）**：顶点、面积，以及 **面积占比**（裁剪/全局）。
+  - **is_partial 标记**：指示是否跨区块。
+  - **层索引** 与 **区块边界框**。
+- 节点特征包含：基于裁剪形状（若无则基于全局）的质心、宽/高、裁剪面积、面积占比、层 id、是否跨区块标志。
+- 额外元数据保存在 PyG `Data` 对象中：
+  - `data.layer: LongTensor [num_nodes]`
+  - `data.node_meta: List[Dict]`，含每个节点的全局/裁剪细节（用于可视化/调试）
+
+该设计借鉴了 LayoutGMN 的结构编码思想，同时与我们现有的 GNN 编码器保持兼容。
+
 ### 4.2. 阶段二：模型训练
 
 数据集准备就绪后，您就可以开始训练 Geo-Layout Transformer。
@@ -158,6 +195,17 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
 -   [ ] **生成式设计**：在生成式框架中使用学习到的表示来合成“构建即正确”的版图。
 
 欢迎随时提出 Issue 或提交 Pull Request。
+
+## 致谢
+
+本项目离不开开源社区的贡献与启发，特别感谢：
+
+- PyTorch 与 PyTorch Geometric，为模型构建与图学习提供可靠基石
+- gdstk/klayout，为 GDSII/OASIS 的解析与几何操作提供高效能力
+- 科学计算生态（NumPy、SciPy），保障数值计算的稳定性
+- 研究工作 LayoutGMN（面向结构相似性的图匹配），启发了我们对多边形/图构建的设计
+
+若您的工作被本项目使用但尚未列出，欢迎提交 Issue 或 PR 以便完善致谢。
 
 ---
 
