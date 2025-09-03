@@ -1,3 +1,4 @@
+# src/models/transformer_core.py
 import torch
 import torch.nn as nn
 import math

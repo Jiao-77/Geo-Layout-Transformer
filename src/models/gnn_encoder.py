@@ -1,3 +1,4 @@
+# src/models/gnn_encoder.py
 import torch
 import torch.nn as nn
 from torch_geometric.nn import GCNConv, SAGEConv, GATConv, global_mean_pool

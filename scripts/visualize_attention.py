@@ -1,3 +1,4 @@
+# scripts/visualize_attention.py
 import argparse
 import torch
 import matplotlib.pyplot as plt

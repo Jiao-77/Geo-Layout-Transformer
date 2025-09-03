@@ -1,3 +1,4 @@
+# configs/hotspot_detection.yaml
 # Hotspot Detection Task Configuration
 
 # Inherits from default.yaml

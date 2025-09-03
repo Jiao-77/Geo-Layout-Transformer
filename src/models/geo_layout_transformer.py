@@ -1,3 +1,4 @@
+# src/models/geo_layout_transformer.py
 import torch
 import torch.nn as nn
 from .gnn_encoder import GNNEncoder
