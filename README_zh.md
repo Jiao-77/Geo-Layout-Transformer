@@ -19,27 +19,27 @@
 
 </div>
 
-# Geo-Layout Transformer 🚀
+# Geo-Layout Transformer 🚀 🔬
 
 **一个用于物理设计分析的统一、自监督基础模型**
 
 ---
 
-## ✨ 亮点
+## ✨ 亮点 🌟
 
 - **统一基础模型**：覆盖多种物理设计分析任务
 - **混合 GNN + Transformer**：从局部到全局建模版图语义
 - **自监督预训练**：在无标签 GDSII/OASIS 上学习强泛化表示
 - **模块化任务头**：轻松适配（如热点检测、连通性验证）
 
-## 🖥️ 支持系统
+## 🖥️ 支持系统 💻
 
 - **Python**：3.9+
 - **操作系统**：macOS 13+/Apple Silicon、Linux（Ubuntu 20.04/22.04）。Windows 建议使用 **WSL2**
 - **深度学习框架**：PyTorch、PyTorch Geometric（CUDA 可选）
 - **EDA I/O**：GDSII/OASIS（通过 `klayout` Python API）
 
-## 1. 项目愿景
+## 1. 项目愿景 🎯
 
 **Geo-Layout Transformer** 是一个旨在推动电子设计自动化（EDA）物理设计领域范式转变的研究项目。我们不再依赖于一套零散的、基于启发式规则的工具，而是致力于构建一个统一的基础模型，使其能够理解半导体版图深层次的、上下文相关的“设计语言”。
 
@@ -51,7 +51,7 @@
 
 我们的愿景是，从目前分散的、任务特定的工具，演进为一个集中的、可复用的“版图理解引擎”，从而加速设计周期，并突破 PPA（功耗、性能、面积）的极限。
 
-## 2. 核心架构
+## 2. 核心架构 🏗️
 
 该模型的架构设计旨在分层处理版图信息，模仿人类专家从局部细节到全局上下文分析设计的过程。
 
@@ -65,7 +65,7 @@
 
 4.  **特定任务头**：从 Transformer 输出的、具有全局上下文感知能力的最终嵌入，被送入简单、轻量级的神经网络“头”（Head）中，以执行特定的下游任务。这种模块化设计使得核心模型能够以最小的代价适应新的应用。
 
-## 🧭 项目结构
+## 🧭 项目结构 📁
 
 ```text
 Geo-Layout-Transformer/
@@ -93,15 +93,15 @@ Geo-Layout-Transformer/
 └─ README*.md                # 中英文文档
 ```
 
-## 3. 快速上手
+## 3. 快速上手 ⚙️
 
-### 3.1. 环境要求
+### 3.1. 环境要求 🧰
 
 *   Python 3.9+
 *   强烈建议使用 Conda 进行环境管理。
 *   能够访问 EDA 工具以生成带标签的数据（例如，使用 DRC 工具生成热点标签）。
 
-### 3.2. 安装步骤
+### 3.2. 安装步骤 🚧
 
 1.  **克隆代码仓库：**
     ```bash
@@ -129,11 +129,11 @@ Geo-Layout-Transformer/
 
 > 提示：GPU 不是必须的。仅 CPU 环境可安装 PyTorch/PyG 的 CPU 版本。
 
-## 4. 项目使用
+## 4. 项目使用 🛠️
 
 项目的工作流程分为两个主要阶段：数据预处理和模型训练。
 
-### 4.1. 阶段一：数据预处理
+### 4.1. 阶段一：数据预处理 🧩
 
 第一步是将您的 GDSII/OASIS 文件转换为模型可以使用的图数据集。
 
@@ -161,7 +161,7 @@ Geo-Layout-Transformer/
 
 该设计借鉴了 LayoutGMN 的结构编码思想，同时与我们现有的 GNN 编码器保持兼容。
 
-### 4.2. 阶段二：模型训练
+### 4.2. 阶段二：模型训练 🏋️
 
 数据集准备就绪后，您就可以开始训练 Geo-Layout Transformer。
 
@@ -185,7 +185,7 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
     python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
     ```
 
-## 5. 发展路线与贡献
+## 5. 发展路线与贡献 🗺️
 
 这是一个宏伟的项目，我们欢迎任何形式的贡献。我们未来的发展路线图包括：
 
@@ -196,7 +196,7 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
 
 欢迎随时提出 Issue 或提交 Pull Request。
 
-## 致谢
+## 致谢 🙏
 
 本项目离不开开源社区的贡献与启发，特别感谢：
 

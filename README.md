@@ -19,7 +19,7 @@
 
 </div>
 
-# Geo-Layout Transformer 🚀
+# Geo-Layout Transformer 🚀 🔬
 
 **A Unified, Self-Supervised Foundation Model for Physical Design Analysis**
 
@@ -39,7 +39,7 @@
 - **Frameworks**: PyTorch, PyTorch Geometric (with CUDA optional)
 - **EDA I/O**: GDSII/OASIS (via `klayout` Python API)
 
-## 1. Vision
+## 1. Vision 🎯
 
 The **Geo-Layout Transformer** is a research project aimed at creating a paradigm shift in Electronic Design Automation (EDA) for physical design. Instead of relying on a fragmented set of heuristic-based tools, we are building a single, unified foundation model that understands the deep, contextual "language" of semiconductor layouts.
 
@@ -51,7 +51,7 @@ By leveraging a novel hybrid **Graph Neural Network (GNN) + Transformer** archit
 
 Our vision is to move from disparate, task-specific tools to a centralized, reusable "Layout Understanding Engine" that accelerates the design cycle and pushes the boundaries of PPA (Power, Performance, and Area).
 
-## 2. Core Architecture
+## 2. Core Architecture 🏗️
 
 The model's architecture is designed to hierarchically process layout information, mimicking how a human expert analyzes a design from local details to global context.
 
@@ -93,15 +93,15 @@ Geo-Layout-Transformer/
 └─ README*.md                # English/Chinese documentation
 ```
 
-## 3. Getting Started
+## 3. Getting Started ⚙️
 
-### 3.1. Prerequisites
+### 3.1. Prerequisites 🧰
 
 *   Python 3.9+
 *   A Conda environment is highly recommended.
 *   Access to EDA tools for generating labeled data (e.g., a DRC engine for hotspot labels).
 
-### 3.2. Installation
+### 3.2. Installation 🚧
 
 1.  **Clone the repository:**
     ```bash
@@ -129,11 +129,11 @@ Geo-Layout-Transformer/
 
 > Tip: GPU is optional. For CPU-only environments, install the CPU variants of PyTorch/PyG.
 
-## 4. Project Usage
+## 4. Project Usage 🛠️
 
 The project workflow is divided into two main stages: data preprocessing and model training.
 
-### 4.1. Stage 1: Data Preprocessing
+### 4.1. Stage 1: Data Preprocessing 🧩
 
 The first step is to convert your GDSII/OASIS files into a graph dataset that the model can consume.
 
@@ -161,11 +161,11 @@ When building a graph for each patch, we now preserve both global and per-patch 
 
 This follows the spirit of LayoutGMN’s structural encoding while staying compatible with our GNN encoder.
 
-### 4.2. Stage 2: Model Training
+### 4.2. Stage 2: Model Training 🏋️
 
 Once the dataset is ready, you can train the Geo-Layout Transformer.
 
-#### Self-Supervised Pre-training (Recommended)
+#### Self-Supervised Pre-training (Recommended) ⚡
 
 To build a powerful foundation model, we first pre-train it on unlabeled data using a "Masked Layout Modeling" task.
 
@@ -174,7 +174,7 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
 ```
 This will train the model to understand the fundamental "grammar" of physical layouts without requiring any expensive labels.
 
-#### Supervised Fine-tuning
+#### Supervised Fine-tuning 🎯
 
 After pre-training, you can fine-tune the model on a smaller, labeled dataset for a specific task like hotspot detection.
 
@@ -185,7 +185,7 @@ After pre-training, you can fine-tune the model on a smaller, labeled dataset fo
     python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
     ```
 
-## 5. Roadmap & Contribution
+## 5. Roadmap & Contribution 🗺️
 
 This project is ambitious and we welcome contributions. Our future roadmap includes:
 
@@ -196,7 +196,7 @@ This project is ambitious and we welcome contributions. Our future roadmap inclu
 
 Please feel free to open an issue or submit a pull request.
 
-## Acknowledgments
+## Acknowledgments 🙏
 
 We stand on the shoulders of open-source communities. This project draws inspiration and/or utilities from:
 
