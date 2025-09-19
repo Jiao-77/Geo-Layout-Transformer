@@ -10,7 +10,7 @@
   <a href="https://github.com/your-username/Geo-Layout-Transformer/network/members"><img src="https://img.shields.io/github/forks/your-username/Geo-Layout-Transformer.svg" /></a>
   <a href="https://github.com/your-username/Geo-Layout-Transformer/issues"><img src="https://img.shields.io/github/issues-raw/your-username/Geo-Layout-Transformer" /></a>
   <a href="https://github.com/your-username/Geo-Layout-Transformer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/your-username/Geo-Layout-Transformer" /></a>
-  <a><img src="https://img.shields.io/badge/python-3.9%2B-blue" /></a>
+  <a><img src="https://img.shields.io/badge/python-3.12%2B-blue" /></a>
   <a><img src="https://img.shields.io/badge/PyTorch-2.x-orange" /></a>
 </p>
 
@@ -35,7 +35,7 @@
 
 ## 🖥️ 支持系统 💻
 
-- **Python**：3.9+
+- **Python**：3.12+
 - **操作系统**：macOS 13+/Apple Silicon、Linux（Ubuntu 20.04/22.04）。Windows 建议使用 **WSL2**
 - **深度学习框架**：PyTorch、PyTorch Geometric（CUDA 可选）
 - **EDA I/O**：GDSII/OASIS（通过 `klayout` Python API）
@@ -98,37 +98,75 @@ Geo-Layout-Transformer/
 
 ### 3.1. 环境要求 🧰
 
-*   Python 3.9+
-*   强烈建议使用 Conda 进行环境管理。
+*   Python 3.12+
+*   依赖管理：推荐使用 uv（已提供 uv.lock）来进行快速、可复现的安装；也支持使用 Conda/Python 作为替代方案。
 *   能够访问 EDA 工具以生成带标签的数据（例如，使用 DRC 工具生成热点标签）。
 
 ### 3.2. 安装步骤 🚧
 
-1.  **克隆代码仓库：**
-    ```bash
-    git clone https://github.com/your-username/Geo-Layout-Transformer.git
-    cd Geo-Layout-Transformer
-    ```
+#### A) 使用 uv（推荐）
 
-2.  **创建并激活 Conda 环境：**
-    ```bash
-    conda create -n geo_trans python=3.9
-    conda activate geo_trans
-    ```
+1）安装 uv（一次性）：
 
-3.  **安装依赖：**
-    本项目需要 PyTorch 和 PyTorch Geometric (PyG)。请根据您的 CUDA 版本遵循官方指南进行安装。
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-    *   **PyTorch:** [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
-    *   **PyG:** [https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)
+2）克隆代码仓库：
 
-    安装完 PyTorch 和 PyG 后，安装其余的依赖项：
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *（注意：您可能需要通过 `klayout` 自身的包管理器或从源码编译来单独安装它，以启用其 Python API）。*
+```bash
+git clone https://github.com/your-username/Geo-Layout-Transformer.git
+cd Geo-Layout-Transformer
+```
+
+3）确保系统可用 Python 3.12（uv 可管理）：
+
+```bash
+uv python install 3.12
+```
+
+4）基于 uv.lock/pyproject 创建环境并安装依赖：
+
+```bash
+uv sync
+```
+
+说明：
+- 如需安装带 CUDA 的 PyTorch/PyG，请先根据官方说明安装对应版本，然后再用 uv 安装其余依赖：
+  - PyTorch: https://pytorch.org/get-started/locally/
+  - PyG: https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html
+  正确安装 Torch/PyG 轮子后，可执行 `uv sync --frozen` 安装剩余依赖。
+- 若需要 `klayout` 的 Python API，可能需要通过其包管理器或源码单独安装。
+
+#### B) 使用 Python/Conda（备选）
+
+1）克隆代码仓库：
+
+```bash
+git clone https://github.com/your-username/Geo-Layout-Transformer.git
+cd Geo-Layout-Transformer
+```
+
+2）创建并激活环境（以 Conda 为例）：
+
+```bash
+conda create -n geo_trans python=3.12
+conda activate geo_trans
+```
+
+3）根据 CUDA 环境安装 PyTorch 和 PyTorch Geometric：
+
+- PyTorch: https://pytorch.org/get-started/locally/
+- PyG: https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html
+
+4）安装其余依赖：
+
+```bash
+pip install -r requirements.txt
+```
 
 > 提示：GPU 不是必须的。仅 CPU 环境可安装 PyTorch/PyG 的 CPU 版本。
+> 说明：如需 `klayout` 的 Python API，可能需要单独安装。
 
 ## 4. 项目使用 🛠️
 
@@ -141,9 +179,14 @@ Geo-Layout-Transformer/
 1.  将您的版图文件放入 `data/gds/` 目录。
 2.  在 `configs/default.yaml` 中配置预处理参数。您需要定义区块大小、步长、层映射以及图边的构建方式。
 3.  运行预处理脚本：
-    ```bash
-    python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
-    ```
+    - 使用 uv（推荐）：
+      ```bash
+      uv run python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
+      ```
+    - 使用 Python/Conda：
+      ```bash
+      python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
+      ```
     该脚本将解析 GDS 文件，将其划分为多个区块，为每个区块构建一个图，并将处理后的数据保存为 `.pt` 文件以便高效加载。
 
 #### 多边形处理与按区块建图 🧩
@@ -171,6 +214,10 @@ Geo-Layout-Transformer/
 为了构建一个强大的基础模型，我们首先在无标签数据上使用“掩码版图建模”任务对其进行预训练。
 
 ```bash
+# 使用 uv（推荐）
+uv run python main.py --config-file configs/default.yaml --mode pretrain --data-dir data/processed/my_design/
+
+# 使用 Python/Conda
 python main.py --config-file configs/default.yaml --mode pretrain --data-dir data/processed/my_design/
 ```
 这将训练模型理解物理版图的基本“语法”，而无需任何昂贵的标签。
@@ -182,9 +229,13 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
 1.  确保您处理好的数据包含标签。
 2.  使用一个特定于任务的配置文件（例如 `hotspot_detection.yaml`），其中定义了模型的任务头和损失函数。
 3.  在 `train` 模式下运行主脚本：
-    ```bash
-    python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
-    ```
+  ```bash
+  # 使用 uv（推荐）
+  uv run python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
+
+  # 使用 Python/Conda
+  python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
+  ```
 
 ## 5. 发展路线与贡献 🗺️
 
@@ -207,7 +258,3 @@ python main.py --config-file configs/default.yaml --mode pretrain --data-dir dat
 - 研究工作 LayoutGMN（面向结构相似性的图匹配），启发了我们对多边形/图构建的设计
 
 若您的工作被本项目使用但尚未列出，欢迎提交 Issue 或 PR 以便完善致谢。
-
----
-
-Made with ❤️ 面向 EDA 研究与开源协作。
