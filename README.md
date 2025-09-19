@@ -6,10 +6,10 @@
 </p>
 
 <p>
-  <a href="https://github.com/your-username/Geo-Layout-Transformer/stargazers"><img src="https://img.shields.io/github/stars/your-username/Geo-Layout-Transformer.svg" /></a>
-  <a href="https://github.com/your-username/Geo-Layout-Transformer/network/members"><img src="https://img.shields.io/github/forks/your-username/Geo-Layout-Transformer.svg" /></a>
-  <a href="https://github.com/your-username/Geo-Layout-Transformer/issues"><img src="https://img.shields.io/github/issues-raw/your-username/Geo-Layout-Transformer" /></a>
-  <a href="https://github.com/your-username/Geo-Layout-Transformer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/your-username/Geo-Layout-Transformer" /></a>
+  <a href="http://jiao77.cn:3012/Jiao77/Geo-Layout-Transformer/stargazers"><img src="https://img.shields.io/github/stars/your-username/Geo-Layout-Transformer.svg" /></a>
+  <a href="http://jiao77.cn:3012/Jiao77/Geo-Layout-Transformer/network/members"><img src="https://img.shields.io/github/forks/your-username/Geo-Layout-Transformer.svg" /></a>
+  <a href="http://jiao77.cn:3012/Jiao77/Geo-Layout-Transformer/issues"><img src="https://img.shields.io/github/issues-raw/your-username/Geo-Layout-Transformer" /></a>
+  <a href="http://jiao77.cn:3012/Jiao77/Geo-Layout-Transformer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/your-username/Geo-Layout-Transformer" /></a>
   <a><img src="https://img.shields.io/badge/python-3.12%2B-blue" /></a>
   <a><img src="https://img.shields.io/badge/PyTorch-2.x-orange" /></a>
 </p>
@@ -115,7 +115,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 2) Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/Geo-Layout-Transformer.git
+git clone http://jiao77.cn:3012/Jiao77/Geo-Layout-Transformer.git
 cd Geo-Layout-Transformer
 ```
 
@@ -143,7 +143,7 @@ Notes:
 1) Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/Geo-Layout-Transformer.git
+git clone http://jiao77.cn:3012/Jiao77/Geo-Layout-Transformer.git
 cd Geo-Layout-Transformer
 ```
 
