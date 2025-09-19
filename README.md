@@ -10,7 +10,7 @@
   <a href="https://github.com/your-username/Geo-Layout-Transformer/network/members"><img src="https://img.shields.io/github/forks/your-username/Geo-Layout-Transformer.svg" /></a>
   <a href="https://github.com/your-username/Geo-Layout-Transformer/issues"><img src="https://img.shields.io/github/issues-raw/your-username/Geo-Layout-Transformer" /></a>
   <a href="https://github.com/your-username/Geo-Layout-Transformer/issues?q=is%3Aissue+is%3Aclosed"><img src="https://img.shields.io/github/issues-closed-raw/your-username/Geo-Layout-Transformer" /></a>
-  <a><img src="https://img.shields.io/badge/python-3.9%2B-blue" /></a>
+  <a><img src="https://img.shields.io/badge/python-3.12%2B-blue" /></a>
   <a><img src="https://img.shields.io/badge/PyTorch-2.x-orange" /></a>
 </p>
 
@@ -35,7 +35,7 @@
 
 ## 🖥️ Supported Systems
 
-- **Python**: 3.9+
+- **Python**: 3.12+
 - **OS**: macOS 13+/Apple Silicon, Linux (Ubuntu 20.04/22.04). Windows via **WSL2** recommended
 - **Frameworks**: PyTorch, PyTorch Geometric (with CUDA optional)
 - **EDA I/O**: GDSII/OASIS (via `klayout` Python API)
@@ -98,37 +98,75 @@ Geo-Layout-Transformer/
 
 ### 3.1. Prerequisites 🧰
 
-*   Python 3.9+
-*   A Conda environment is highly recommended.
+*   Python 3.12+
+*   Dependency management: using uv is recommended for fast, reproducible installs (uv.lock provided). Conda/Python is supported as an alternative.
 *   Access to EDA tools for generating labeled data (e.g., a DRC engine for hotspot labels).
 
 ### 3.2. Installation 🚧
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/your-username/Geo-Layout-Transformer.git
-    cd Geo-Layout-Transformer
-    ```
+#### A) Using uv (recommended)
 
-2.  **Create and activate the Conda environment:**
-    ```bash
-    conda create -n geo_trans python=3.9
-    conda activate geo_trans
-    ```
+1) Install uv (one-time):
 
-3.  **Install dependencies:**
-    This project requires PyTorch and PyTorch Geometric (PyG). Please follow the official installation instructions for your specific CUDA version.
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
-    *   **PyTorch:** [https://pytorch.org/get-started/locally/](https://pytorch.org/get-started/locally/)
-    *   **PyG:** [https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html)
+2) Clone the repository:
 
-    After installing PyTorch and PyG, install the remaining dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-    *(Note: You may need to install `klayout` separately via its own package manager or build from source to enable its Python API).*
+```bash
+git clone https://github.com/your-username/Geo-Layout-Transformer.git
+cd Geo-Layout-Transformer
+```
+
+3) Ensure Python 3.12 is available (uv can manage it):
+
+```bash
+uv python install 3.12
+```
+
+4) Create the environment and install dependencies from uv.lock/pyproject:
+
+```bash
+uv sync
+```
+
+Notes:
+- For CUDA builds of PyTorch/PyG, follow the official installers first, then install the rest via uv:
+  - PyTorch: https://pytorch.org/get-started/locally/
+  - PyG: https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html
+  After installing the correct Torch/PyG wheels, you may run `uv sync --frozen` to install the remaining packages.
+- You may need to install `klayout` separately (package manager or from source) to enable its Python API.
+
+#### B) Using Python/Conda (alternative)
+
+1) Clone the repository:
+
+```bash
+git clone https://github.com/your-username/Geo-Layout-Transformer.git
+cd Geo-Layout-Transformer
+```
+
+2) Create and activate an environment (Conda example):
+
+```bash
+conda create -n geo_trans python=3.12
+conda activate geo_trans
+```
+
+3) Install PyTorch and PyTorch Geometric per your CUDA setup:
+
+- PyTorch: https://pytorch.org/get-started/locally/
+- PyG: https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html
+
+4) Install the remaining dependencies:
+
+```bash
+pip install -r requirements.txt
+```
 
 > Tip: GPU is optional. For CPU-only environments, install the CPU variants of PyTorch/PyG.
+> Note: You may need to install `klayout` separately to enable its Python API.
 
 ## 4. Project Usage 🛠️
 
@@ -141,9 +179,14 @@ The first step is to convert your GDSII/OASIS files into a graph dataset that th
 1.  Place your layout files in the `data/gds/` directory.
 2.  Configure the preprocessing parameters in `configs/default.yaml`. You will need to define patch size, stride, layer mappings, and how to construct graph edges.
 3.  Run the preprocessing script:
-    ```bash
-    python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
-    ```
+    - Using uv (recommended):
+      ```bash
+      uv run python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
+      ```
+    - Using Python/Conda:
+      ```bash
+      python scripts/preprocess_gds.py --config-file configs/default.yaml --gds-file data/gds/my_design.gds --output-dir data/processed/my_design/
+      ```
     This script will parse the GDS file, divide it into patches, construct a graph for each patch, and save the processed data as `.pt` files for efficient loading.
 
 #### Polygon handling and per-patch graphs 🧩
@@ -171,6 +214,10 @@ Once the dataset is ready, you can train the Geo-Layout Transformer.
 To build a powerful foundation model, we first pre-train it on unlabeled data using a "Masked Layout Modeling" task.
 
 ```bash
+# Using uv (recommended)
+uv run python main.py --config-file configs/default.yaml --mode pretrain --data-dir data/processed/my_design/
+
+# Using Python/Conda
 python main.py --config-file configs/default.yaml --mode pretrain --data-dir data/processed/my_design/
 ```
 This will train the model to understand the fundamental "grammar" of physical layouts without requiring any expensive labels.
@@ -182,9 +229,13 @@ After pre-training, you can fine-tune the model on a smaller, labeled dataset fo
 1.  Ensure your processed data includes labels.
 2.  Use a task-specific config file (e.g., `hotspot_detection.yaml`) that defines the model head and loss function.
 3.  Run the main script in `train` mode:
-    ```bash
-    python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
-    ```
+  ```bash
+  # Using uv (recommended)
+  uv run python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
+
+  # Using Python/Conda
+  python main.py --config-file configs/hotspot_detection.yaml --mode train --data-dir data/processed/labeled_hotspots/ --checkpoint-path /path/to/pretrained_model.pth
+  ```
 
 ## 5. Roadmap & Contribution 🗺️
 
@@ -207,7 +258,3 @@ We stand on the shoulders of open-source communities. This project draws inspira
 - Research works such as LayoutGMN (graph matching for structural similarity) that informed our polygon/graph handling design
 
 If your work is used and not listed here, please open an issue or PR so we can properly credit you.
-
----
-
-Made with ❤️ for EDA research and open-source collaboration.
