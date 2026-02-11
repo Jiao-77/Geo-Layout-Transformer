@@ -48,15 +48,14 @@ class GNNEncoder(nn.Module):
             data: 一个 PyTorch Geometric 的 Data 或 Batch 对象。
 
         Returns:
-            一个代表区块的图级别嵌入的张量。
+            一个代表节点级别的嵌入的张量。
         """
-        x, edge_index, batch = data.x, data.edge_index, data.batch
+        x, edge_index = data.x, data.edge_index
 
         # 通过所有 GNN 层
         for layer in self.layers:
             x = layer(x, edge_index)
             x = torch.relu(x)
 
-        # 全局池化以获得图级别的嵌入
-        graph_embedding = self.readout(x, batch)
-        return graph_embedding
+        # 返回节点级别的嵌入，不进行全局池化
+        return x

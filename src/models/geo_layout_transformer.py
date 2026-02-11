@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 from .gnn_encoder import GNNEncoder
 from .transformer_core import TransformerCore
-from .task_heads import ClassificationHead, MatchingHead
+from .task_heads import ClassificationHead, MultiLabelClassificationHead, RegressionHead, MatchingHead
 
 class GeoLayoutTransformer(nn.Module):
     """完整的 Geo-Layout Transformer 模型。"""
@@ -38,16 +38,34 @@ class GeoLayoutTransformer(nn.Module):
         self.task_head = None
         if 'task_head' in config['model']:
             head_config = config['model']['task_head']
+            pooling_type = head_config.get('pooling_type', 'mean')
+            
             if head_config['type'] == 'classification':
                 self.task_head = ClassificationHead(
                     input_dim=head_config['input_dim'],
                     hidden_dim=head_config['hidden_dim'],
-                    output_dim=head_config['output_dim']
+                    output_dim=head_config['output_dim'],
+                    pooling_type=pooling_type
+                )
+            elif head_config['type'] == 'multi_label_classification':
+                self.task_head = MultiLabelClassificationHead(
+                    input_dim=head_config['input_dim'],
+                    hidden_dim=head_config['hidden_dim'],
+                    output_dim=head_config['output_dim'],
+                    pooling_type=pooling_type
+                )
+            elif head_config['type'] == 'regression':
+                self.task_head = RegressionHead(
+                    input_dim=head_config['input_dim'],
+                    hidden_dim=head_config['hidden_dim'],
+                    output_dim=head_config['output_dim'],
+                    pooling_type=pooling_type
                 )
             elif head_config['type'] == 'matching':
                 self.task_head = MatchingHead(
                     input_dim=head_config['input_dim'],
-                    output_dim=head_config['output_dim']
+                    output_dim=head_config['output_dim'],
+                    pooling_type=pooling_type
                 )
             # 可在此处添加其他任务头
 

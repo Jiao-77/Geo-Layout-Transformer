@@ -49,37 +49,37 @@
 ## 优先级清单（可执行项）
 
 ### P0（立即优先）
-- [ ] 数据集切分与 DataLoader 管线
+- [x] 数据集切分与 DataLoader 管线
 	- 在 `main.py` 引入可配置的 train/val/test 切分比例与随机种子；支持从目录/清单载入各 split。
 	- 为 `configs/default.yaml` 增加 `splits` 字段；更新 `README*` 用法说明。
-- [ ] 监督训练工程化
+- [x] 监督训练工程化
 	- 在 `trainer.py` 补充验证阶段与最佳模型保存（`torch.save` 至指定路径）。
 	- 引入学习率调度器（如 StepLR/CosineAnnealingWarmRestarts）与早停策略。
 	- 支持 class weights/focal loss：在 `trainer.py` 增加 `focal_loss` 实现并在配置选择。
-- [ ] 自监督预训练修复
+- [x] 自监督预训练修复
 	- 明确 batch 内每图的 patch 序列映射：根据 `batch.ptr` 逐图生成 mask 索引，避免跨图混淆。
 	- 将掩码作用在输入特征/图结构层而非已池化的图级嵌入；或增加“节点级→patch 聚合→重建头”。
 	- 为 `transformer_core` 或单独模块增加重建头（MLP）以回归原 patch 表征；提供单元测试。
 
 ### P1（高优）
-- [ ] 任务头与损失扩展
+- [x] 任务头与损失扩展
 	- 在 `task_heads.py` 增加多标签分类、回归头；增添可插拔的池化（CLS token/Mean/Max/Attention Pool）。
 	- 在 `trainer.py` 支持多任务训练配置（不同 head/loss 的加权）。
-- [ ] 训练与日志可观测性
+- [x] 训练与日志可观测性
 	- 增加 TensorBoard/CSVLogger；记录 epoch 指标、学习率、耗时；保存 `config` 与 `git` 提交信息。
 	- 固定随机种子（PyTorch/NumPy/环境变量），在 `utils` 中提供 `set_seed()` 并在入口调用。
-- [ ] 可复现实验与最小数据
+- [x] 可复现实验与最小数据
 	- 提供最小 GDS 示例与对应的 processed `.pt` 小样，便于 CI 与用户快速体验。
 	- 在 `scripts/` 增加一键跑通的小样流程脚本（preprocess→train→eval）。
 
 ### P2（中优）
-- [ ] 大图/性能优化
+- [x] 大图/性能优化
 	- 引入混合精度（`torch.cuda.amp`）、梯度累积、可选更小 batch，监控显存。
 	- 探索 GraphSAINT/Cluster-GCN 等大图训练策略，并与当前 patch 划分结合。
 - [ ] I/O 与生态集成
 	- `klayout` Python API 的可选集成与安装脚本说明；解析 OASIS 的路径补全与测试。
 	- 在 `graph_constructor.py` 为边策略加入可学习/基于几何关系的拓展（如跨层连接边）。
-- [ ] 可解释性与可视化
+- [x] 可解释性与可视化
 	- 完成 `scripts/visualize_attention.py`：注册 Hook 提取注意力/特征图，绘图并保存到 `docs/`。
 	- 在 `Data.node_meta` 基础上支持几何叠加可视化（patch bbox 与局部多边形）。
 

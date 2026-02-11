@@ -22,7 +22,7 @@ model:
     hidden_dim: 128
     output_dim: 256      # Dimension of the patch embedding
     num_layers: 4
-    gnn_type: "rgat"     # 'rgat', 'gcn', 'graphsage'
+    gnn_type: "gat"     # 'gat', 'gcn', 'graphsage'
 
   # Transformer Backbone
   transformer:
@@ -42,9 +42,25 @@ training:
   optimizer: "adamw"
   loss_function: "bce" # 'bce', 'focal_loss'
   weight_decay: 0.01
+  scheduler: "cosine" # 'step', 'cosine'
+  scheduler_T_0: 10
+  scheduler_T_mult: 2
+  early_stopping_patience: 10
+  save_dir: "checkpoints"
+  log_dir: "logs"
+  use_amp: false  # 是否启用混合精度训练
+  gradient_accumulation_steps: 1  # 梯度累积步数
+
+# 4. Data Splits
+splits:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  random_seed: 42
 
 # 4. Self-Supervised Pre-training
 pretraining:
   mask_ratio: 0.15
   epochs: 200
   learning_rate: 0.0005
+  early_stopping_patience: 10
